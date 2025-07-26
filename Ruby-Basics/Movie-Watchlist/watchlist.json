@@ -2,16 +2,25 @@
   {
     "title": "IronMan I",
     "year": 2008,
-    "watched": false
+    "watched": false,
+    "rating": null
   },
   {
     "title": "Avengers Inifnite War",
     "year": 2020,
-    "watched": false
+    "watched": false,
+    "rating": null
   },
   {
     "title": "Fantastic Four",
     "year": 2025,
-    "watched": false
+    "watched": true,
+    "rating": 10.0
+  },
+  {
+    "title": "Supa Strikers",
+    "year": 2000,
+    "watched": false,
+    "rating": 7.0
   }
 ]

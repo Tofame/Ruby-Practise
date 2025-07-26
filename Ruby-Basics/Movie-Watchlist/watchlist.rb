@@ -9,22 +9,28 @@ class Watchlist
     @movies.size
   end
 
-  def list_movies
-    sorted = @movies.sort_by { |movie| movie.watched ? 1 : 0 }
-    print_movies(sorted)
-    sorted
-  end
+  def list_movies(filter: :all, sort_by: nil, descending: false)
+    movies = case filter
+             when :watched
+               @movies.select(&:watched)
+             when :unwatched
+               @movies.reject(&:watched)
+             else
+               @movies
+             end
 
-  def list_unwatched_movies
-    unwatched = @movies.select { |movie| !movie.watched }
-    print_movies(unwatched)
-    unwatched
-  end
+    if sort_by == :rating
+      movies = movies.sort_by { |m| m.rating || -1 } # for unrated use -1
+      movies.reverse! if descending
+    elsif sort_by == :year
+      movies = movies.sort_by(&:year)
+      movies.reverse! if descending
+    else
+      movies = movies.sort_by { |m| m.rating || -1 }
+    end
 
-  def list_watched_movies
-    watched = @movies.select { |movie| movie.watched }
-    print_movies(watched)
-    watched
+    print_movies(movies)
+    movies
   end
 
   def add_movie(title, year)
@@ -44,6 +50,13 @@ class Watchlist
     true
   end
 
+  def rate_movie(index, rating)
+    movie = @movies[index - 1]
+    return false unless movie
+    movie.rating = rating
+    true
+  end
+
   def save_to_file(filename)
     data = @movies.map(&:to_h)
     File.write(filename, JSON.pretty_generate(data))
@@ -59,8 +72,7 @@ class Watchlist
 
   def print_movies(movies)
     movies.each_with_index do |movie, index|
-      status = movie.watched ? "Watched" : "Not watched"
-      puts "#{index + 1}. #{movie.title} (#{movie.year}) - #{status}"
+      puts "#{index + 1}. #{movie}"
     end
   end
 end
